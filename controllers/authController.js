@@ -28,23 +28,26 @@ module.exports = {
 
   //Registering user
   registerUser: [registerValidation,async (req, res) => {
-    const errorsAfterValidation = validationResult(req);
-    if (!errorsAfterValidation.isEmpty()) {
-        return res.status(400).json({
-          code: 400,
-          errors: errorsAfterValidation.mapped(),
-        });
-      } 
-   const hashedPassword= generateHashedPassword(req.body.password)
-   req.body.password=hashedPassword
+      const errorsAfterValidation = validationResult(req);
+      console.log(errorsAfterValidation,"what is the rrerer")
+      if (!errorsAfterValidation.isEmpty()) {
+          return res.status(400).json({
+              code: 400,
+              errors: errorsAfterValidation.mapped(),
+            });
+        } 
+        // const hashedPassword= generateHashedPassword(req.body.password)
+        // req.body.password=hashedPassword
+        console.log(req.body,"rerererer")
    
    const newUser = new UserModel(req.body);
-   const {username}=req.body
+   const {email}=req.body
+
   
     //console.log(req.body,"what is in it")
 
     try {
-      const oldUser = await UserModel.findOne({ username });
+      const oldUser = await UserModel.findOne({ email });
 
       if (oldUser) {
         return res
@@ -78,11 +81,14 @@ module.exports = {
       errors: errorsAfterValidation.mapped(),
     });
   } 
-    const { username, password } = req.body;
+    const { email, password } = req.body;
     try {
-      const user = await UserModel.findOne({ username: username });
+      const user = await UserModel.findOne({ email: email });
+      console.log(user,"userere")
       if (user) {
-        const validity = await bcrypt.compare(password, user.password);
+        // const validity = await bcrypt.compare(password, user.password);
+        const validity=password==user.password
+        console.log(validity,"dfdfdf")
 
         // validity?res.status(200).json(user):res.status(400).json("wrong Password")
         if (!validity) {
